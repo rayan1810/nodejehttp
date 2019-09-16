@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body onload="loadDoc()"> 
+     <a href="#" id="aAddProduct">Add New Product</a>
+
+    <!-- <a href="#" id="show">Show</a> -->
+     <h2>Enter Product Details</h2>
+     Enter Product ID :<input type="text" id="id"><br><br>
+     Enter Product Name :<input type="text" id="name"><br><br>
+     Enter Product Description :<textarea name="desc" id="desc" cols="30" rows="10"></textarea><br><br>
+     Enter Price :<input type="text" id="price"><br><br>
+     Enter Quantity Available:<input type="text" id="quant"><br><br>
+     <button onclick="addproduct()">Submit</button>
+     <div id="divAddProduct">
+     </div>
+     <br>
+     <br><br>
+     <div>
+         <h3>List Of Products</h3>
+    </div>
+     <div id="divListProduct"></div>
+</body>
+<script src="http://localhost:8000/script.js" type="text/javascript"></script>
+<script>
+  var id=0;
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange=function() 
+{
+    if (xhttp.readyState == 4 && xhttp.status == 200) 
+    {
+      let users = JSON.parse( xhttp.responseText) ;
+
+      if(Array.isArray( users)  && users.length )
+      {users.forEach(function(user)
+                      { 
+                          let node = document.getElementById("divListProduct");
+                          let textNode = document.createTextNode("Id : " + user.Id +" Name : "+ user.Name + " Desc : " + user.Desc+" Price : "+user.Price+" Quantity : "+user.Quantity);   
+                          let br = document.createElement('br');
+                                // Create a text node
+                          node.appendChild(textNode);
+                          node.appendChild(br);
+                        }
+                      );   
+    }
+}
+else
+    {
+       console.log(xhttp.status) ;
+    }
+
+};
+function addproduct(){
+  var id = document.getElementById("id");
+  var name = document.getElementById("name");
+  var desc = document.getElementById("desc");
+  var price = document.getElementById("price");
+  var quant = document.getElementById("quant");
+  xhttp.open("POST", "/addProduct");
+  xhttp.setRequestHeader("Content-Type", "application/json");
+
+  xhttp.send(JSON.stringify({Name: name.value , Id : id.value ,Desc:desc.value,Price:price.value,Quantity:quant.value}));
+  location.reload();
+}
+function loadDoc() 
+{
+  xhttp.open("GET", "http://localhost:8000/order");
+  xhttp.send();
+  //loadJS();
+}
+
+</script>
+</html>
